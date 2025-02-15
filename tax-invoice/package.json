@@ -1,5 +1,5 @@
 {
-  "name": "invoice",
+  "name": "tax-invoice",
   "version": "0.1.0",
   "private": true,
   "scripts": {
