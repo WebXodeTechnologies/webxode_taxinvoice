@@ -30,7 +30,7 @@ export async function onboardUser(prevState: any, formData: FormData) {
     return redirect("/dashboard");
 }
 
-export async function createInovice(formData:FormData) {
+export async function createInovice(prevState:any,formData:FormData) {
     const session = await requireUser();
 
     const submission = parseWithZod(formData,{
@@ -59,9 +59,7 @@ export async function createInovice(formData:FormData) {
             invoiceNumber:submission.value.invoiceNumber,
             status:submission.value.status,
             total:submission.value.total,
-
-        }
-    })
-
-
+            note:submission.value.note,
+        },
+    });
 }
