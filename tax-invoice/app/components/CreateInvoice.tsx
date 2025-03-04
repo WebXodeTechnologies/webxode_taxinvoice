@@ -19,19 +19,41 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar1Icon } from "lucide-react";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { SubmitButton } from "./SubmitButtons";
+import { useForm } from "@conform-to/react";
+import { parseWithZod } from "@conform-to/zod";
+import { invoiceSchema } from "../utils/zodSchemas";
 
 export function CreateInvoice() {
+  const [lastResult, action] = useActionState(CreateInvoice, undefined);
+  const[form, fields] = useForm({
+    lastResult, 
+    onValidate({formData}) {
+      return parseWithZod(formData,{
+        schema:invoiceSchema
+      });
+    },
+    shouldValidate:"onBlur",
+    shouldRevalidate:"onInput",
+  })
+
   const [selectedDate, setSelectedDate] = useState(new Date());
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="p-6">
+        <form id={form.id} action={action} onSubmit={form.onSubmit} noValidate>
         <div className="flex flex-col gap-1 w-fit mb-6">
           <div className="flex items-center gap-4">
             <Badge variant="secondary"> Draft </Badge>
-            <Input placeholder="test123" />
+            <Input 
+            name={fields.invoiceName.name}
+            key={fields.invoiceName.key}
+            defaultValue={fields.invoiceName.initialValue}
+            placeholder="test123" />
           </div>
+          <p className="text-sm text-red-500">{fields.invoiceName.errors}</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6 mb-5">
           <div>
@@ -173,6 +195,7 @@ export function CreateInvoice() {
             </div>
           </div>
         </div>
+        </form>
       </CardContent>
     </Card>
   );
